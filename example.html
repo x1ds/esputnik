@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example Esputnik</title>
+  <script src="esputnik.js"></script>
+</head>
+<body>
+    <form id="exampleForm">
+        <label><input type="email" name="email" value="example@mail.ru"></label>
+        <label><input type="text" name="phone" value="123456789"></label>
+        <button type="submit">SEND</button>
+    </form>
+</body>
+<script>
+    const esputnik = new Esputnik('860E33C37AF4938413D68CC3E2936D24');
+
+    document.querySelector("#exampleForm").onsubmit = function() {
+        let userEmail = document.querySelector('input[name="email"]').value;
+        let userPhone = document.querySelector('input[name="phone"]').value;
+
+        esputnik.getContactIdFromEmail(userEmail).then(contactId => {
+            if (contactId !== 0) {
+                esputnik.sendEvent({
+                    'eventTypeKey': 'widgetAPIalreadySubscribe',
+                    'email': userEmail,
+                    'phone': userPhone,
+                });
+            } else {
+                esputnik.createContactSubscribe({
+                    "formType": "createContactSubscribe",
+                    "email": userEmail,
+                    "phone": userPhone
+                });
+                esputnik.sendEvent({
+                    'eventTypeKey': 'widgetAPIsubscribe',
+                    'email': userEmail,
+                    'phone': userPhone,
+                });
+            }
+        });
+
+        return false;
+    }
+</script>
+</html>
